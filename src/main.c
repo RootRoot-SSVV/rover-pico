@@ -11,6 +11,8 @@ int main() {
     bluetooth_init();
     bus_init();
 
+    printf("Hello\n");
+
     while (1) {
         tight_loop_contents();
     }
