@@ -15,7 +15,7 @@ modes:
     18      =   disconnect
 */
 
-uint8_t *data_buffer;
+static uint8_t* data_buffer;
 
 void bluetooth_init() {
     data_buffer = malloc(sizeof(uint8_t) * 64);
@@ -48,14 +48,11 @@ void on_bluetooth_rx() {
 
     set_motor_pins(data_buffer[1]);
 
-    if(data_buffer[0] == 17) {
-        select(data_buffer[0]);
+    uint8_t lst[64] = {6, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-        uint8_t n = rescan(data_buffer);
-        for(int i = 0; i<n+2; i++) {
-            if(uart_is_writable(UART_ID)) {
-                uart_putc(UART_ID, data_buffer[i]);
-            }
+    if(data_buffer[0] == 17) {
+        if(uart_is_writable(UART_ID)) {
+            uart_puts(UART_ID, lst); 
         }
     }
 

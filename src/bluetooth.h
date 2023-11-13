@@ -9,8 +9,6 @@
 #define UART_TX_PIN 16
 #define UART_RX_PIN 17
 
-extern uint8_t* data_buffer;
-
 void bluetooth_init();
 
 void on_bluetooth_rx();
