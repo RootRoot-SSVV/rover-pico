@@ -9,7 +9,9 @@ set(CMAKE_CXX_STANDARD 17)
 pico_sdk_init()
 
 add_executable(main
-main.c
+src/main.c
+src/bluetooth.c
+src/system_manager.c
 )
 
 pico_enable_stdio_usb(main 1)
