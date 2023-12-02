@@ -15,6 +15,7 @@ void bluetooth_init();
 void bluetooth_recieve();
 void bluetooth_send();
 uint8_t* get_input_buffer();
+void send_return_message();
 
 // Tests
 void test_rescan_return();

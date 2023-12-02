@@ -10,7 +10,7 @@ void system_manager_init();
 void bus_init();
 
 uint8_t* get_connected_modules();
-
+uint8_t get_number_of_modules();
 
 // TESTS
 void test__choose_test();

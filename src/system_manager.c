@@ -26,6 +26,10 @@ uint8_t* get_connected_modules() {
     return connected_modules;
 }
 
+uint8_t get_number_of_modules() {
+    return number_of_modules;
+}
+
 void select_module(uint8_t mode) {
     selected_module = mode;
 
@@ -42,12 +46,12 @@ void test_set_leds() {
     
     selected_module = mode;
 
-    for(int i = 0; i < 3; i++, mode >>= 1) {
-        gpio_put(i, mode & 1);
+    for(int i = 0; i < 4; i++, motors >>= 1) {
+        gpio_put(i, motors & 1);
     }
 
-    for(int i = 3; i < 7; i++, motors >>= 1) {
-        gpio_put(i, motors & 1);
+    for(int i = 4; i < 7; i++, mode >>= 1) {
+        gpio_put(i, mode & 1);
     }
 }
 

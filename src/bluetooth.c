@@ -27,17 +27,21 @@ void response() {
         // No return
         break;
     case 17:
-        // Rescan
-        test_rescan_return();
+        // Disconnect
         break;
     case 18:
-        // Disconnect
+        // rescan
+        test_rescan_return();
+        send_return_message();
         break;
     case 19:
         // Change module to
         break;
     default:
         error_signal();
+        // output_buffer = input_buffer;
+        // send_return_message();
+        // output_buffer = (uint8_t *)malloc(sizeof(int) * 64);
         break;
     }
     test_set_leds();
@@ -46,28 +50,43 @@ void response() {
 void bluetooth_recieve() {
     uart_set_irq_enables(UART_ID, false, false);
 
+    // uart_read_blocking(UART_ID, input_buffer, 64);
 
-    uart_read_blocking(UART_ID, input_buffer, 64);
+    for (int i = 0; i < 64; i++) {
+        while (!uart_is_readable(UART_ID)) {}
+        input_buffer[i] = uart_getc(UART_ID);
+    }
 
     response();
 
-    for (int i = 0; i < 64; i++){
-        
-    }
-    
-    // hw_clear_bits(&uart_get_hw(UART_ID)->rsr, UART_UARTRSR_BITS);
     uart_set_irq_enables(UART_ID, true, false);
 }
 
 void bluetooth_send() {
-    //uart_putc_raw()
-    //uart_putc()
-    uart_write_blocking(UART_ID, output_buffer, 64);
+    while (!uart_is_writable(UART_ID));
+    uart_putc(UART_ID, 254);
+    for(int i = 0; i < 64; i++) {
+        while (!uart_is_writable(UART_ID));
+        uart_putc(UART_ID, output_buffer[i]);
+    }
+
+    // uart_write_blocking(UART_ID, output_buffer, 64);
 }
 
 uint8_t* get_input_buffer() {
     return input_buffer;
 }
+
+void send_return_message() {
+    output_buffer[0] = 17;
+    output_buffer[1] = get_number_of_modules();
+
+    for(int i = 0; i<output_buffer[1]; i++) {
+        output_buffer[2 + i] = get_connected_modules()[i];
+    }
+    bluetooth_send();
+}
+
 
 //////////////////////////////////////////////
 // Tests
