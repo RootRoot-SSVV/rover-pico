@@ -52,6 +52,9 @@ void bluetooth_recieve() {
 
     // uart_read_blocking(UART_ID, input_buffer, 64);
 
+    while(!uart_is_readable(UART_ID));
+    while(uart_getc(UART_ID) != 254);
+
     for (int i = 0; i < 64; i++) {
         while (!uart_is_readable(UART_ID)) {}
         input_buffer[i] = uart_getc(UART_ID);
