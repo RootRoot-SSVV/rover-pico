@@ -1,6 +1,8 @@
 #include "bluetooth.h"
 #include "system_manager.h"
 
+#include "demo_module.h"
+
 static uint8_t* input_buffer;
 static uint8_t* output_buffer;
 
@@ -19,10 +21,23 @@ void bluetooth_init() {
     irq_set_exclusive_handler(UART_IRQ, bluetooth_recieve);
     irq_set_enabled(UART_IRQ, true);
     uart_set_irq_enables(UART_ID, true, false);
+
+    for(int i = 0; i < 32; i++) {
+        while (!uart_is_writable(UART_ID));
+        uart_putc(UART_ID, 0);
+    }
+    
 }
 
 void response() {
     switch (input_buffer[0]) {
+    case 0:
+        // neutral
+        break;
+    case 1:
+        // demo_module
+        demo_module_reaction();
+        break;
     case 16:
         // No return
         break;
@@ -31,11 +46,12 @@ void response() {
         break;
     case 18:
         // rescan
-        test_rescan_return();
         send_return_message();
         break;
     case 19:
         // Change module to
+        set_module_id(input_buffer[1]);
+        module_setup(input_buffer[2]);
         break;
     default:
         error_signal();
@@ -44,7 +60,6 @@ void response() {
         // output_buffer = (uint8_t *)malloc(sizeof(int) * 64);
         break;
     }
-    test_set_leds();
 }
 
 void bluetooth_recieve() {
@@ -68,7 +83,7 @@ void bluetooth_recieve() {
 void bluetooth_send() {
     while (!uart_is_writable(UART_ID));
     uart_putc(UART_ID, 254);
-    for(int i = 0; i < 64; i++) {
+    for(int i = 0; i < 61; i++) {
         while (!uart_is_writable(UART_ID));
         uart_putc(UART_ID, output_buffer[i]);
     }
@@ -82,10 +97,11 @@ uint8_t* get_input_buffer() {
 
 void send_return_message() {
     output_buffer[0] = 17;
+    uint8_t *connected_modules = get_connected_modules();
     output_buffer[1] = get_number_of_modules();
 
     for(int i = 0; i<output_buffer[1]; i++) {
-        output_buffer[2 + i] = get_connected_modules()[i];
+        output_buffer[2 + i] = connected_modules[i];
     }
     bluetooth_send();
 }
@@ -93,18 +109,6 @@ void send_return_message() {
 
 //////////////////////////////////////////////
 // Tests
-void test_rescan_return() {
-    test__choose_test();
-}
-
-void test_select_module(int mode) {
-    gpio_put(0, mode & 1);
-    mode >>= 1;
-    gpio_put(1, mode & 1);
-    mode >>= 1;
-    gpio_put(2, mode & 1);
-    mode >>= 1;
-}
 
 void error_signal() {
     gpio_put(25, true);

@@ -12,11 +12,12 @@ add_executable(main
 src/main.c
 src/bluetooth.c
 src/system_manager.c
+src/demo_module.c
 )
 
 pico_enable_stdio_usb(main 1)
 pico_enable_stdio_uart(main 1)
 
-target_link_libraries(main pico_stdlib)
+target_link_libraries(main pico_stdlib hardware_pwm hardware_gpio)
 
 pico_add_extra_outputs(main)
