@@ -39,7 +39,8 @@ void response() {
         demo_module_reaction();
         break;
     case 16:
-        // No return
+        // ultra_sonic
+        ultrasonic_module_reaction();
         break;
     case 17:
         // Disconnect
@@ -93,6 +94,10 @@ void bluetooth_send() {
 
 uint8_t* get_input_buffer() {
     return input_buffer;
+}
+
+uint8_t* get_output_buffer() {
+    return output_buffer;
 }
 
 void send_return_message() {
