@@ -48,7 +48,7 @@ void demo_module_reaction() {
     set_pwm(2, B / 255.0);
 }
 
-void init_pwm(uint gpio) {
+void init_pwm(uint8_t gpio) {
     uint slice_num = pwm_gpio_to_slice_num(gpio);
     pwm_config config = pwm_get_default_config();
 
@@ -57,7 +57,7 @@ void init_pwm(uint gpio) {
     gpio_set_function(gpio, GPIO_FUNC_PWM);
 }
 
-void set_pwm(uint gpio, float duty_cycle) {
+void set_pwm(uint8_t gpio, float duty_cycle) {
     uint slice_num = pwm_gpio_to_slice_num(gpio);
     uint pwm_level = (uint)(duty_cycle * PWM_MAX_LEVEL);
     pwm_set_gpio_level(gpio, pwm_level);

@@ -30,6 +30,7 @@ void bluetooth_init() {
 }
 
 void response() {
+    motor_driver(input_buffer[1]);
     switch (input_buffer[0]) {
     case 0:
         // neutral

@@ -9,6 +9,7 @@ int main() {
 
     bluetooth_init();
     bus_init();
+    motor_init();
     
     while (1) {
         tight_loop_contents();

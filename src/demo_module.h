@@ -9,7 +9,7 @@
 
 void init_demo_module();
 void demo_module_reaction();
-void init_pwm(uint gpio);
-void set_pwm(uint gpio, float duty_cycle);
+void init_pwm(uint8_t gpio);
+void set_pwm(uint8_t gpio, float duty_cycle);
 
 #endif // DEMO_MODULE_H_

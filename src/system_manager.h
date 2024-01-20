@@ -19,6 +19,7 @@ uint8_t get_number_of_modules();
 
 
 // TODO:
-void motor_driver();
+void motor_init();
+void motor_driver(uint8_t motorInt);
 
 #endif // SYSTEM_MANAGER_H_
