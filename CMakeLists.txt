@@ -13,6 +13,8 @@ src/main.c
 src/bluetooth.c
 src/system_manager.c
 src/demo_module.c
+src/ultrasonic_module.c
+src/matrix_module.c
 )
 
 pico_enable_stdio_usb(main 1)

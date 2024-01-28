@@ -4,8 +4,7 @@
 //TRIG         0
 //ECHO         1
 
-#define TRIG 0
-#define ECHO 1
+
 
 uint8_t* output = get_output_buffer();
 
@@ -33,6 +32,7 @@ double get_distance(){
 void write_double_to_output(double value) {
     memcpy(output, &value, sizeof(double));
 }
+
 
 void ultrasonic_module_reaction() {
     // [mode][id][motor][pulse]
