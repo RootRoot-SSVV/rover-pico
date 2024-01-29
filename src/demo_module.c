@@ -27,9 +27,7 @@ void init_demo_module(){
 
 void demo_module_reaction() {
     // [mode][id][motor][led1][led2][led3][R][G][B][BUZZER]
-    //    0    1    2      3    4     5    6  7  8    9 
-    
-    // [254, 1, 0, 0, 1, 1, 0, 0, 0, 0,
+    //    0    1    2      3    4     5    6  7  8    9
 
     uint8_t *message = get_input_buffer();
 

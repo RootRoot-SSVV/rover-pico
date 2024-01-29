@@ -6,6 +6,10 @@
 #include "hardware/uart.h"
 #include "hardware/gpio.h"
 
+#include "system_manager.h"
+#include "ultrasonic_module.h"
+#include "demo_module.h"
+
 #define UART_ID uart0
 #define BAUD_RATE 9600
 #define UART_TX_PIN 16
@@ -15,6 +19,7 @@ void bluetooth_init();
 void bluetooth_recieve();
 void bluetooth_send();
 uint8_t* get_input_buffer();
+uint8_t* get_output_buffer();
 void send_return_message();
 
 // Tests

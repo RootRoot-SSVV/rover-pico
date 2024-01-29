@@ -5,9 +5,6 @@
 //ECHO         1
 
 
-
-uint8_t* output = get_output_buffer();
-
 void init_ultrasonic_module(){
     gpio_set_dir(TRIG, GPIO_OUT);
     gpio_set_dir(ECHO, GPIO_IN);
@@ -30,7 +27,7 @@ double get_distance(){
 }
 
 void write_double_to_output(double value) {
-    memcpy(output, &value, sizeof(double));
+    memcpy(get_output_buffer(), &value, sizeof(double));
 }
 
 
