@@ -2,7 +2,7 @@
 #include "bluetooth.h"
 #include "demo_module.h"
 
-static uint8_t connected_modules[16];
+static uint8_t connected_modules[8];
 static uint8_t number_of_modules;
 static uint8_t selected_module;
 
@@ -27,29 +27,28 @@ void module_setup(int id) {
 
 void bus_init() {
     // 0 - 11       -> data for module
-    // 12, 13, 14   -> module selector
-    // 15           -> module is active
+    // 12           -> module is connected
+    // 13, 14, 15   -> module selector
 
     for(int i = 0; i <= 11; i++) {
         gpio_init(i);
         gpio_set_dir(i, GPIO_OUT);
     }
 
-    for (int i = 12; i < 15; i++){
+    gpio_init(12);
+    gpio_set_dir(12, GPIO_IN);
+
+    for (int i = 13; i < 16; i++) {
         gpio_init(i);
         gpio_set_dir(i, GPIO_OUT);
     }
-    
-    gpio_init(15);
-    gpio_set_dir(15, GPIO_IN);
-
 }
 
 void set_module_id(uint8_t id) {
     selected_module = id;
-    gpio_put(12, id & 1);
-    gpio_put(13, id & 2);
-    gpio_put(14, id & 4);
+    gpio_put(13, id & 1);
+    gpio_put(14, id & 2);
+    gpio_put(15, id & 4);
 
 }
 
@@ -57,11 +56,11 @@ void scan_for_modules() {
     number_of_modules = 0;
 
     for (int i = 0; i < 8; i++) {
-        gpio_put(12, i & 1);
-        gpio_put(13, i & 2);
-        gpio_put(14, i & 4);
+        gpio_put(13, i & 1);
+        gpio_put(14, i & 2);
+        gpio_put(15, i & 4);
 
-        if(gpio_get(15)) {
+        if(gpio_get(12)) {
             number_of_modules++;
             connected_modules[number_of_modules-1] = i;
         }
@@ -70,6 +69,7 @@ void scan_for_modules() {
 }
 
 uint8_t* get_connected_modules() {
+
     // Test
     connected_modules[0] = 1;
     number_of_modules = 1;

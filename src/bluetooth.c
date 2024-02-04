@@ -1,17 +1,12 @@
 #include "bluetooth.h"
-#include "system_manager.h"
 
-#include "demo_module.h"
 
-static uint8_t* input_buffer;
-static uint8_t* output_buffer;
+static uint8_t input_buffer[64];
+static uint8_t output_buffer[64];
 
 static uint8_t mode;
 
 void bluetooth_init() {
-    input_buffer = (uint8_t *)malloc(sizeof(int) * 64);
-    output_buffer = (uint8_t *)malloc(sizeof(int) * 64);
-
     uart_init(UART_ID, BAUD_RATE);
     gpio_set_function(UART_TX_PIN, GPIO_FUNC_UART);
     gpio_set_function(UART_RX_PIN, GPIO_FUNC_UART);
@@ -36,14 +31,28 @@ void response() {
         // neutral
         break;
     case 1:
+        // ultrasonic_module
+        ultrasonic_module_reaction();
+        bluetooth_send();
+        break;
+    case 2:
+        // matrix_module
+        break;
+    case 3:
+        // ---
+        break;
+    case 4:
+        // ---
+        break;
+    case 5:
+        // ---
+        break;
+    case 6:
+        // ---
+        break;
+    case 7:
         // demo_module
         demo_module_reaction();
-        break;
-    case 16:
-        // No return
-        break;
-    case 17:
-        // Disconnect
         break;
     case 18:
         // rescan
@@ -56,9 +65,6 @@ void response() {
         break;
     default:
         error_signal();
-        // output_buffer = input_buffer;
-        // send_return_message();
-        // output_buffer = (uint8_t *)malloc(sizeof(int) * 64);
         break;
     }
 }
@@ -94,6 +100,10 @@ void bluetooth_send() {
 
 uint8_t* get_input_buffer() {
     return input_buffer;
+}
+
+uint8_t* get_output_buffer() {
+    return output_buffer;
 }
 
 void send_return_message() {
