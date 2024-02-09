@@ -36,19 +36,29 @@ void response() {
         bluetooth_send();
         break;
     case 2:
-        // matrix_module
+        // ultrasonic_module
+        ultrasonic_module_reaction();
+        bluetooth_send();
         break;
     case 3:
-        // ---
+        // ultrasonic_module
+        ultrasonic_module_reaction();
+        bluetooth_send();
         break;
     case 4:
-        // ---
+        // ultrasonic_module
+        ultrasonic_module_reaction();
+        bluetooth_send();
         break;
     case 5:
-        // ---
+        // ultrasonic_module
+        ultrasonic_module_reaction();
+        bluetooth_send();
         break;
     case 6:
-        // ---
+        // ultrasonic_module
+        ultrasonic_module_reaction();
+        bluetooth_send();
         break;
     case 7:
         // demo_module
@@ -60,11 +70,10 @@ void response() {
         break;
     case 19:
         // Change module to
-        set_module_id(input_buffer[1]);
+        set_module_id(input_buffer[2]);
         module_setup(input_buffer[2]);
         break;
     default:
-        error_signal();
         break;
     }
 }
@@ -122,6 +131,8 @@ void send_return_message() {
 // Tests
 
 void error_signal() {
+    gpio_init(25);
+    gpio_set_dir(25, GPIO_OUT);
     gpio_put(25, true);
 }
 

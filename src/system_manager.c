@@ -10,15 +10,34 @@ static uint8_t selected_module;
 void system_manager_init() {
     selected_module = 16;
     number_of_modules = 0;
+
+    // Test
+    number_of_modules = 1;
+    connected_modules[0] = 1;
 }
 
 void module_setup(int id) {
+    init_ultrasonic_module();
     switch (id) {
     case 1:
-        init_demo_module();
         break;
     case 2:
         // module with id 2
+        break;
+    case 3:
+        // module with id 3
+        break;
+    case 4:
+        // module with id 4
+        break;
+    case 5:
+        // module with id 5
+        break;
+    case 6:
+        // module with id 6
+        break;
+    case 7:
+        init_demo_module();
         break;
     default:
         break;
@@ -27,7 +46,7 @@ void module_setup(int id) {
 
 void bus_init() {
     // 0 - 11       -> data for module
-    // 12           -> module is connected
+    // 12           -> module is connected>
     // 13, 14, 15   -> module selector
 
     for(int i = 0; i <= 11; i++) {

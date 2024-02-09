@@ -5,42 +5,44 @@
 //ECHO         1
 
 
-void init_ultrasonic_module(){
+void init_ultrasonic_module() {
     gpio_set_dir(TRIG, GPIO_OUT);
     gpio_set_dir(ECHO, GPIO_IN);
 }
 
-double get_distance(){
+double get_distance() {
+    gpio_set_dir(TRIG, GPIO_OUT);
+    gpio_set_dir(ECHO, GPIO_IN);
+
+    gpio_put(TRIG, 0);
+    sleep_us(2);
     gpio_put(TRIG, 1);
     sleep_us(10);
     gpio_put(TRIG, 0);
 
     while(gpio_get(ECHO) == 0);
-    uint64_t start = time_us_64();
+    absolute_time_t start_time = get_absolute_time();
+
     while(gpio_get(ECHO) == 1);
-    uint64_t end = time_us_64();
+    absolute_time_t end_time = get_absolute_time();
 
-    uint64_t duration = end - start;
-    float distance = duration * 0.034 / 2;
+    int64_t duration = absolute_time_diff_us(start_time, end_time);
+    double distance = (duration * 0.0343) / 2;
 
-    return (double)distance;
-}
 
-void write_double_to_output(double value) {
-    memcpy(get_output_buffer(), &value, sizeof(double));
+    if(distance > 100) error_signal();
+
+    return distance;
 }
 
 
 void ultrasonic_module_reaction() {
-    // [mode][id][motor][pulse]
-    //    0    1    2      3
-
     uint8_t *message = get_input_buffer();
+    get_output_buffer()[0] = 1;
 
-    if (message[3] == true) {
-        double distance = get_distance();
-        write_double_to_output(distance);
+    if (message[3] == 1) {
+        int distance = get_distance();
+        get_output_buffer()[1] = distance;
     }
-
 }
 

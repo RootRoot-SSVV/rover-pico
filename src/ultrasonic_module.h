@@ -14,7 +14,6 @@
 
 void init_ultrasonic_module();
 double get_distance();
-void write_double_to_output(double value);
 void ultrasonic_module_reaction();
 
 #endif // ULTRASONIC_MODULE_H_
