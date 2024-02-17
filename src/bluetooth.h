@@ -9,6 +9,7 @@
 #include "system_manager.h"
 #include "ultrasonic_module.h"
 #include "demo_module.h"
+#include "matrix_module.h"
 
 #define UART_ID uart0
 #define BAUD_RATE 9600

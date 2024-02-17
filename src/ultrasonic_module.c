@@ -10,7 +10,7 @@ void init_ultrasonic_module() {
     gpio_set_dir(ECHO, GPIO_IN);
 }
 
-double get_distance() {
+int get_distance() {
     gpio_set_dir(TRIG, GPIO_OUT);
     gpio_set_dir(ECHO, GPIO_IN);
 
@@ -27,10 +27,10 @@ double get_distance() {
     absolute_time_t end_time = get_absolute_time();
 
     int64_t duration = absolute_time_diff_us(start_time, end_time);
-    double distance = (duration * 0.0343) / 2;
+    int distance = (duration * 0.0343) / 2;
 
 
-    if(distance > 100) error_signal();
+    if(distance > 20) error_signal();
 
     return distance;
 }
@@ -42,7 +42,8 @@ void ultrasonic_module_reaction() {
 
     if (message[3] == 1) {
         int distance = get_distance();
-        get_output_buffer()[1] = distance;
+        if(distance < 20) get_output_buffer()[1] = 1;
+        else get_output_buffer()[1] = 2;
     }
 }
 

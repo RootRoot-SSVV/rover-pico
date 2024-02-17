@@ -6,14 +6,11 @@
 
 int main() {
     stdio_init_all();
-    gpio_init(25);
-    gpio_put(25, 1);
 
     bluetooth_init();
+    system_manager_init();
     bus_init();
     motor_init();
-    
-    
 
     while (1) {
         tight_loop_contents();

@@ -1,6 +1,7 @@
 #include "system_manager.h"
 #include "bluetooth.h"
 #include "demo_module.h"
+#include "matrix_module.h"
 
 static uint8_t connected_modules[8];
 static uint8_t number_of_modules;
@@ -13,16 +14,16 @@ void system_manager_init() {
 
     // Test
     number_of_modules = 1;
-    connected_modules[0] = 1;
+    connected_modules[0] = 2;
 }
 
 void module_setup(int id) {
-    init_ultrasonic_module();
     switch (id) {
     case 1:
+        init_ultrasonic_module();
         break;
     case 2:
-        // module with id 2
+        init_matrix_module();
         break;
     case 3:
         // module with id 3
@@ -88,12 +89,6 @@ void scan_for_modules() {
 }
 
 uint8_t* get_connected_modules() {
-
-    // Test
-    connected_modules[0] = 1;
-    number_of_modules = 1;
-    // ...
-
     return connected_modules;
 }
 

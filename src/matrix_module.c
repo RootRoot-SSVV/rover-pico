@@ -9,7 +9,7 @@ void max7219_send(uint8_t reg, uint8_t data) {
 }
 
 // Initialize MAX7219
-void init_max7219() {
+void init_matrix_module() {
     // Initialize SPI
     spi_init(SPI_PORT, 1000000); // 1 MHz SPI clock
     gpio_set_function(DIN, GPIO_FUNC_SPI);
@@ -49,10 +49,7 @@ void matrix_module_reaction() {
     // [mode][id][display][pattern 1 - 8]
     //   0     1     2         3 - 11
 
-    uint8_t *message = get_input_buffer();
-
-    if (message[2] == true) {
-        display_pattern(&message[3]);
-    }
+    uint8_t *message = get_input_buffer();    
+    display_pattern(&message[2]);
 }
 

@@ -16,7 +16,7 @@
 #define CLK 2
 #define SPI_PORT spi0
 
-void init_max7219();
+void init_matrix_module();
 void max7219_send(uint8_t reg, uint8_t data);
 void set_led(int x, int y, bool state);
 void display_pattern(uint8_t *pattern);

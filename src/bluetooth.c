@@ -37,28 +37,19 @@ void response() {
         break;
     case 2:
         // ultrasonic_module
-        ultrasonic_module_reaction();
-        bluetooth_send();
+        matrix_module_reaction();
         break;
     case 3:
-        // ultrasonic_module
-        ultrasonic_module_reaction();
-        bluetooth_send();
+        // ID nije korišten
         break;
     case 4:
-        // ultrasonic_module
-        ultrasonic_module_reaction();
-        bluetooth_send();
+        // ID nije korišten
         break;
     case 5:
-        // ultrasonic_module
-        ultrasonic_module_reaction();
-        bluetooth_send();
+        // ID nije korišten
         break;
     case 6:
-        // ultrasonic_module
-        ultrasonic_module_reaction();
-        bluetooth_send();
+        // ID nije korišten        
         break;
     case 7:
         // demo_module
