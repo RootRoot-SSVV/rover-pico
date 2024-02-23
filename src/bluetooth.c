@@ -1,10 +1,11 @@
 #include "bluetooth.h"
 
-
 static uint8_t input_buffer[64];
 static uint8_t output_buffer[64];
 
 static uint8_t mode;
+
+volatile bool uart_data_waiting = false;
 
 void bluetooth_init() {
     uart_init(UART_ID, BAUD_RATE);
@@ -13,7 +14,7 @@ void bluetooth_init() {
     uart_set_fifo_enabled(UART_ID, true);
     int UART_IRQ = UART_ID == uart0 ? UART0_IRQ : UART1_IRQ;
     
-    irq_set_exclusive_handler(UART_IRQ, bluetooth_recieve);
+    irq_set_exclusive_handler(UART_IRQ, uart_triggered);
     irq_set_enabled(UART_IRQ, true);
     uart_set_irq_enables(UART_ID, true, false);
 
@@ -24,7 +25,12 @@ void bluetooth_init() {
     
 }
 
+void uart_triggered() {
+    uart_data_waiting = true;
+}
+
 void response() {
+    gpio_put(25, uart_data_waiting);
     motor_driver(input_buffer[1]);
     switch (input_buffer[0]) {
     case 0:
@@ -36,7 +42,7 @@ void response() {
         bluetooth_send();
         break;
     case 2:
-        // ultrasonic_module
+        // matrix_module
         matrix_module_reaction();
         break;
     case 3:
@@ -70,27 +76,27 @@ void response() {
 }
 
 void bluetooth_recieve() {
-    uart_set_irq_enables(UART_ID, false, false);
-
-    // uart_read_blocking(UART_ID, input_buffer, 64);
+    // uart_set_irq_enables(UART_ID, false, false);
 
     while(!uart_is_readable(UART_ID));
     while(uart_getc(UART_ID) != 254);
 
     for (int i = 0; i < 64; i++) {
-        while (!uart_is_readable(UART_ID)) {}
+        while (!uart_is_readable(UART_ID));
         input_buffer[i] = uart_getc(UART_ID);
     }
 
-    response();
+    uart_data_waiting = false;
 
-    uart_set_irq_enables(UART_ID, true, false);
+    // response();
+
+    // uart_set_irq_enables(UART_ID, true, false);
 }
 
 void bluetooth_send() {
     while (!uart_is_writable(UART_ID));
     uart_putc(UART_ID, 254);
-    for(int i = 0; i < 61; i++) {
+    for(int i = 0; i < 64; i++) {
         while (!uart_is_writable(UART_ID));
         uart_putc(UART_ID, output_buffer[i]);
     }
@@ -116,15 +122,3 @@ void send_return_message() {
     }
     bluetooth_send();
 }
-
-
-//////////////////////////////////////////////
-// Tests
-
-void error_signal() {
-    gpio_init(25);
-    gpio_set_dir(25, GPIO_OUT);
-    gpio_put(25, true);
-}
-
-///////////////////////////////////////////////

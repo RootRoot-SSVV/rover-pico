@@ -4,6 +4,7 @@
 #include "bluetooth.h"
 #include "system_manager.h"
 
+
 int main() {
     stdio_init_all();
 
@@ -12,7 +13,13 @@ int main() {
     bus_init();
     motor_init();
 
+    gpio_init(25);
+    gpio_set_dir(25, GPIO_OUT);
+
     while (1) {
-        tight_loop_contents();
+        if(uart_triggered){
+            bluetooth_recieve();
+            response();
+        }
     }
 }

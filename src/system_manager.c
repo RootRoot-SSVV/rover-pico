@@ -13,8 +13,9 @@ void system_manager_init() {
     number_of_modules = 0;
 
     // Test
-    number_of_modules = 1;
-    connected_modules[0] = 2;
+    number_of_modules = 2;
+    connected_modules[0] = 1;
+    connected_modules[1] = 2;
 }
 
 void module_setup(int id) {
@@ -193,8 +194,3 @@ void motor_driver(uint8_t motorInt) {
         gpio_put(18, 0);
     }
 }
-
-//////////////////////////////////////////////
-// Tests
-
-//////////////////////////////////////////////

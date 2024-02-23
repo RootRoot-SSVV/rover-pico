@@ -1,5 +1,7 @@
 #include "matrix_module.h"
 
+bool firstTurnOn = true;
+
 // Function to send data to a single register
 void max7219_send(uint8_t reg, uint8_t data) {
     gpio_put(CS, 0); // Start transmission
@@ -23,6 +25,11 @@ void init_matrix_module() {
     max7219_send(0x0B, 0x07); // Scan limit - display all digits
     max7219_send(0x0C, 0x01); // Shutdown register - normal operation
     max7219_send(0x0A, 0x0F); // Intensity register - max intensity
+
+    if(firstTurnOn) {
+        firstTurnOn = false;
+        display_pattern((uint8_t[]){0, 0, 0, 0, 0, 0, 0, 0});
+    }
 }
 
 // Set a single LED in the matrix
@@ -50,6 +57,6 @@ void matrix_module_reaction() {
     //   0     1     2         3 - 11
 
     uint8_t *message = get_input_buffer();    
-    display_pattern(&message[2]);
+    display_pattern(&message[3]);
 }
 

@@ -31,15 +31,15 @@ void demo_module_reaction() {
 
     uint8_t *message = get_input_buffer();
 
-    gpio_put(3, message[2]);
-    gpio_put(4, message[3]);
-    gpio_put(5, message[4]);
+    gpio_put(3, message[3]);
+    gpio_put(4, message[4]);
+    gpio_put(5, message[5]);
     
-    gpio_put(7, message[8]);
+    gpio_put(7, message[9]);
 
-    uint8_t R = message[5];
-    uint8_t G = message[6];
-    uint8_t B = message[7];
+    uint8_t R = message[6];
+    uint8_t G = message[7];
+    uint8_t B = message[8];
     
     set_pwm(0, R / 255.0);
     set_pwm(1, G / 255.0);
