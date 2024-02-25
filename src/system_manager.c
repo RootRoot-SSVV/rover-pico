@@ -3,19 +3,14 @@
 #include "demo_module.h"
 #include "matrix_module.h"
 
-static uint8_t connected_modules[8];
-static uint8_t number_of_modules;
-static uint8_t selected_module;
+uint8_t connected_modules[8];
+volatile uint8_t number_of_modules;
+volatile uint8_t selected_module;
 
-// initiales system states
+// inicijalizira početna stanja
 void system_manager_init() {
     selected_module = 16;
     number_of_modules = 0;
-
-    // Test
-    number_of_modules = 2;
-    connected_modules[0] = 1;
-    connected_modules[1] = 2;
 }
 
 void module_setup(int id) {
@@ -27,16 +22,16 @@ void module_setup(int id) {
         init_matrix_module();
         break;
     case 3:
-        // module with id 3
+        // modul s id 3
         break;
     case 4:
-        // module with id 4
+        // modul s id 4
         break;
     case 5:
-        // module with id 5
+        // modul s id 5
         break;
     case 6:
-        // module with id 6
+        // modul s id 6
         break;
     case 7:
         init_demo_module();
@@ -56,8 +51,8 @@ void bus_init() {
         gpio_set_dir(i, GPIO_OUT);
     }
 
-    gpio_init(12);
-    gpio_set_dir(12, GPIO_IN);
+    gpio_init(10);
+    gpio_set_dir(10, GPIO_IN);
 
     for (int i = 13; i < 16; i++) {
         gpio_init(i);
@@ -65,6 +60,7 @@ void bus_init() {
     }
 }
 
+// Promjeni modul
 void set_module_id(uint8_t id) {
     selected_module = id;
     gpio_put(13, id & 1);
@@ -73,20 +69,22 @@ void set_module_id(uint8_t id) {
 
 }
 
+// Mijenjanjem broja na sabirnici pretraži module
 void scan_for_modules() {
+
     number_of_modules = 0;
 
-    for (int i = 0; i < 8; i++) {
+    for (int i = 1; i < 8; i++) {
         gpio_put(13, i & 1);
         gpio_put(14, i & 2);
         gpio_put(15, i & 4);
 
-        if(gpio_get(12)) {
-            number_of_modules++;
-            connected_modules[number_of_modules-1] = i;
+        sleep_ms(100);
+
+        if(gpio_get(10)) {
+            connected_modules[number_of_modules++] = i;
         }
     }
-    
 }
 
 uint8_t* get_connected_modules() {
@@ -104,23 +102,24 @@ void select_module(uint8_t mode) {
     gpio_put(13, mode & 2);
     gpio_put(14, mode & 4);
 
-    // Change GPIOs 0, 1, 2 on bus to match 'mode' in binary...
+    // 
 }
 
+// Postavljanje pinova motora
 void motor_init() {
     gpio_init(28);
-    gpio_set_dir(28, GPIO_OUT);
+    gpio_set_dir(28, GPIO_OUT);     // Stalno 1
     gpio_init(27);
-    gpio_set_dir(27, GPIO_OUT);
+    gpio_set_dir(27, GPIO_OUT);     // Stalno 1
     gpio_init(26);
     gpio_set_dir(26, GPIO_OUT);     // LPWM
     gpio_init(22);
     gpio_set_dir(22, GPIO_OUT);     // RPWM
 
     gpio_init(21);
-    gpio_set_dir(21, GPIO_OUT);
+    gpio_set_dir(21, GPIO_OUT);     // Stalno 1
     gpio_init(20);
-    gpio_set_dir(20, GPIO_OUT);
+    gpio_set_dir(20, GPIO_OUT);     // Stalno 1
     gpio_init(19);
     gpio_set_dir(19, GPIO_OUT);     // LPWM
     gpio_init(18);
@@ -132,37 +131,14 @@ void motor_init() {
     gpio_put(20, 1);
 }
 
+// Ugasi / upali motor u određenom smjeru
 void motor_driver(uint8_t motorInt) {
     uint8_t forward = motorInt & 1;
     uint8_t backward = motorInt & 2;
     uint8_t left = motorInt & 4;
     uint8_t right = motorInt & 8;
 
-    if(forward && right) {
-        gpio_put(22, 0);
-        gpio_put(26, 1);
-
-        gpio_put(19, 0);
-        gpio_put(18, 0);
-    } else if (forward && left) {
-        gpio_put(26, 0);
-        gpio_put(22, 0);
-
-        gpio_put(18, 0);
-        gpio_put(19, 1);
-    } else if (backward && right) {
-        gpio_put(26, 0);
-        gpio_put(22, 1);
-
-        gpio_put(19, 0);
-        gpio_put(18, 0);
-    } else if (backward && left) {
-        gpio_put(26, 0);
-        gpio_put(22, 0);
-
-        gpio_put(19, 0);
-        gpio_put(18, 1);
-    } else if (forward) {
+    if (forward) {
         gpio_put(22, 0);
         gpio_put(26, 1);
 

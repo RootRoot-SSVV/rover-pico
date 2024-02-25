@@ -14,56 +14,52 @@ void init_ultrasonic_module() {
 volatile int shared_distance = 0;
 
 uint32_t pulseIn(uint gpio, uint level, uint32_t timeout) {
-    // Record the start time
+    // Označi početnio vrijeme
     absolute_time_t start_time = get_absolute_time();
 
-    // Wait for the pin to go to the target level
+    // Pričekaj da bude !level
     while (gpio_get(gpio) != level) {
-        gpio_put(25, 1);
         if (absolute_time_diff_us(start_time, get_absolute_time()) >= timeout) {
             return 0;
         }
     }
-    gpio_put(25, 0);
 
-    // Record the time when the pin goes to the target level
+    // Označi početno vijeme pulsa
     absolute_time_t pulse_start_time = get_absolute_time();
 
-    // Wait for the pin to go to the opposite level
+    // Pričekaj da bude level
     while (gpio_get(gpio) == level) {
-        gpio_put(25, 1);
         if (absolute_time_diff_us(start_time, get_absolute_time()) >= timeout) {
             return 0;
         }
     }
-    gpio_put(25, 0);
-    // Record the time when the pin goes to the opposite level
+    // Označi vrijeme kraja pulsa
     absolute_time_t pulse_end_time = get_absolute_time();
 
-    // Calculate the pulse duration
+    // Izračunaj razliku vremena
     uint32_t pulse_duration = absolute_time_diff_us(pulse_start_time, pulse_end_time);
 
     return pulse_duration;
 }
 
 int get_distance() {
-    // Send the trigger pulse
+    // Započni puls
     gpio_put(TRIG, 0);
     sleep_us(2);
     gpio_put(TRIG, 1);
     sleep_us(10);
     gpio_put(TRIG, 0);
 
-    // Measure the echo pulse
+    // Izmjeri vrijeme
     uint32_t duration = pulseIn(ECHO, 1, 10000);
 
-    // Calculate the distance
+    // Izračunaj udaljenost
     int distance = (duration * 0.0343) / 2.0;
 
-    // Store the distance in the shared variable
     return distance;
 }
 
+// Spremi udajenost u listu slanja
 void ultrasonic_module_reaction() {
     uint8_t *message = get_input_buffer();
     get_output_buffer()[0] = 1;

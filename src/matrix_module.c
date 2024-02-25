@@ -2,29 +2,31 @@
 
 bool firstTurnOn = true;
 
-// Function to send data to a single register
+static uint8_t led_matrix[8] = {0};
+
+// Funkcija za slanje podataka pojedinačnom registru
 void max7219_send(uint8_t reg, uint8_t data) {
-    gpio_put(CS, 0); // Start transmission
+    gpio_put(CS, 0); // Početak prijenosa
     spi_write_blocking(SPI_PORT, &reg, 1);
     spi_write_blocking(SPI_PORT, &data, 1);
-    gpio_put(CS, 1); // End transmission
+    gpio_put(CS, 1); // Kraj prijenosa
 }
 
-// Initialize MAX7219
+// Inicijalizacija MAX7219
 void init_matrix_module() {
-    // Initialize SPI
-    spi_init(SPI_PORT, 1000000); // 1 MHz SPI clock
+    // Inicijalizacija SPI
+    spi_init(SPI_PORT, 1000000); // SPI sat od 1 MHz
     gpio_set_function(DIN, GPIO_FUNC_SPI);
     gpio_set_function(CLK, GPIO_FUNC_SPI);
     gpio_init(CS);
     gpio_set_dir(CS, GPIO_OUT);
 
-    // Initialize MAX7219
-    max7219_send(0x0F, 0x00); // Display test register - turn off test mode
-    max7219_send(0x09, 0x00); // Decode mode - use no decode
-    max7219_send(0x0B, 0x07); // Scan limit - display all digits
-    max7219_send(0x0C, 0x01); // Shutdown register - normal operation
-    max7219_send(0x0A, 0x0F); // Intensity register - max intensity
+    // Inicijalizacija MAX7219
+    max7219_send(0x0F, 0x00); 
+    max7219_send(0x09, 0x00); 
+    max7219_send(0x0B, 0x07);
+    max7219_send(0x0C, 0x01);  
+    max7219_send(0x0A, 0x0F); 
 
     if(firstTurnOn) {
         firstTurnOn = false;
@@ -32,20 +34,23 @@ void init_matrix_module() {
     }
 }
 
-// Set a single LED in the matrix
 void set_led(int x, int y, bool state) {
-    uint8_t led_matrix[8] = {0};
+    // Izračunaj zrcalnu poziciju za x
+    int mirrored_x = 7 - x;
 
     if (state) {
-        led_matrix[y] |= (1 << x);
+        // Postavi bit na zrcalnoj x poziciji
+        led_matrix[y] |= (1 << mirrored_x);
     } else {
-        led_matrix[y] &= ~(1 << x);
+        // Očisti bit na zrcalnoj x poziciji
+        led_matrix[y] &= ~(1 << mirrored_x);
     }
 
+    // Pošalji ažurirano stanje reda LED matrici
     max7219_send(y + 1, led_matrix[y]);
 }
 
-// Function to display a pattern or data on the matrix
+// Funkcija za prikaz uzorka ili podataka na matrici
 void display_pattern(uint8_t *pattern) {
     for (int i = 0; i < 8; i++) {
         max7219_send(i + 1, pattern[i]);
@@ -53,10 +58,9 @@ void display_pattern(uint8_t *pattern) {
 }
 
 void matrix_module_reaction() {
-    // [mode][id][display][pattern 1 - 8]
-    //   0     1     2         3 - 11
+    // [način][id][prikaz][uzorak 1 - 8]
+    //    0     1     2         3 - 11
 
     uint8_t *message = get_input_buffer();    
-    display_pattern(&message[3]);
+    display_pattern(&message[2]);
 }
-

@@ -1,8 +1,8 @@
 #ifndef ULTRASONIC_MODULE_H_
 #define ULTRASONIC_MODULE_H_
 
-#define TRIG 0
-#define ECHO 1
+#define TRIG 1
+#define ECHO 0
 
 #include <stdlib.h>
 #include <stdio.h>

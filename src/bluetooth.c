@@ -7,6 +7,7 @@ static uint8_t mode;
 
 volatile bool uart_data_waiting = false;
 
+// Bluetooth inicijalizacija
 void bluetooth_init() {
     uart_init(UART_ID, BAUD_RATE);
     gpio_set_function(UART_TX_PIN, GPIO_FUNC_UART);
@@ -25,6 +26,7 @@ void bluetooth_init() {
     
 }
 
+// Označi da postoji nova poruka
 void uart_triggered() {
     uart_data_waiting = true;
 }
@@ -63,10 +65,11 @@ void response() {
         break;
     case 18:
         // rescan
+        scan_for_modules();
         send_return_message();
         break;
     case 19:
-        // Change module to
+        // Promjena modula
         set_module_id(input_buffer[2]);
         module_setup(input_buffer[2]);
         break;
@@ -75,9 +78,8 @@ void response() {
     }
 }
 
+// Odgovor na prekid
 void bluetooth_recieve() {
-    // uart_set_irq_enables(UART_ID, false, false);
-
     while(!uart_is_readable(UART_ID));
     while(uart_getc(UART_ID) != 254);
 
@@ -87,12 +89,10 @@ void bluetooth_recieve() {
     }
 
     uart_data_waiting = false;
-
-    // response();
-
-    // uart_set_irq_enables(UART_ID, true, false);
 }
 
+
+// Pošalji poruku
 void bluetooth_send() {
     while (!uart_is_writable(UART_ID));
     uart_putc(UART_ID, 254);
@@ -100,8 +100,6 @@ void bluetooth_send() {
         while (!uart_is_writable(UART_ID));
         uart_putc(UART_ID, output_buffer[i]);
     }
-
-    // uart_write_blocking(UART_ID, output_buffer, 64);
 }
 
 uint8_t* get_input_buffer() {
@@ -112,6 +110,7 @@ uint8_t* get_output_buffer() {
     return output_buffer;
 }
 
+// Vrati poruku vezana za rescan
 void send_return_message() {
     output_buffer[0] = 17;
     uint8_t *connected_modules = get_connected_modules();
