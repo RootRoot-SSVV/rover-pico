@@ -1,7 +1,7 @@
 #include "bluetooth.h"
 
-static uint8_t input_buffer[64];
-static uint8_t output_buffer[64];
+static uint8_t input_buffer[16];
+static uint8_t output_buffer[16];
 
 static uint8_t mode;
 
@@ -23,12 +23,26 @@ void bluetooth_init() {
         while (!uart_is_writable(UART_ID));
         uart_putc(UART_ID, 0);
     }
-    
+
 }
 
 // Označi da postoji nova poruka
 void uart_triggered() {
     uart_data_waiting = true;
+}
+
+bool is_uart_triggered() {
+    return uart_data_waiting;
+}
+
+void core1_task(){
+    while (true)
+    {
+        if(input_buffer[0] == 1){
+            get_distance();
+        }
+    }
+    
 }
 
 void response() {
@@ -83,7 +97,7 @@ void bluetooth_recieve() {
     while(!uart_is_readable(UART_ID));
     while(uart_getc(UART_ID) != 254);
 
-    for (int i = 0; i < 64; i++) {
+    for (int i = 0; i < 16; i++) {
         while (!uart_is_readable(UART_ID));
         input_buffer[i] = uart_getc(UART_ID);
     }
@@ -96,7 +110,7 @@ void bluetooth_recieve() {
 void bluetooth_send() {
     while (!uart_is_writable(UART_ID));
     uart_putc(UART_ID, 254);
-    for(int i = 0; i < 64; i++) {
+    for(int i = 0; i < 16; i++) {
         while (!uart_is_writable(UART_ID));
         uart_putc(UART_ID, output_buffer[i]);
     }

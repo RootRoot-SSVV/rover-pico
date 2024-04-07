@@ -13,7 +13,7 @@
 #include "bluetooth.h"
 
 void init_ultrasonic_module();
-int get_distance();
+void get_distance();
 void ultrasonic_module_reaction();
 
 #endif // ULTRASONIC_MODULE_H_

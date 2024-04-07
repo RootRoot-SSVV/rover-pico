@@ -42,7 +42,7 @@ uint32_t pulseIn(uint gpio, uint level, uint32_t timeout) {
     return pulse_duration;
 }
 
-int get_distance() {
+void get_distance() {
     // Započni puls
     gpio_put(TRIG, 0);
     sleep_us(2);
@@ -55,18 +55,16 @@ int get_distance() {
 
     // Izračunaj udaljenost
     int distance = (duration * 0.0343) / 2.0;
-
-    return distance;
+    shared_distance = distance;
 }
 
 // Spremi udajenost u listu slanja
 void ultrasonic_module_reaction() {
+    if(get_input_buffer()[2] == 0) return;
+
     uint8_t *message = get_input_buffer();
     get_output_buffer()[0] = 1;
 
-    int distance = get_distance();
-
-    get_output_buffer()[1] = distance;
+    get_output_buffer()[1] = shared_distance;
     get_output_buffer()[2] = 0; 
 }
-

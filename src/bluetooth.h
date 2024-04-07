@@ -5,6 +5,7 @@
 #include "pico/stdlib.h"
 #include "hardware/uart.h"
 #include "hardware/gpio.h"
+#include "pico/multicore.h"
 
 #include "system_manager.h"
 #include "ultrasonic_module.h"
@@ -26,5 +27,7 @@ uint8_t* get_output_buffer();
 void send_return_message();
 void uart_triggered();
 bool get_uart_triggered();
+bool is_uart_triggered();
+void core1_task();
 
 #endif // BLUETOOTH_H_

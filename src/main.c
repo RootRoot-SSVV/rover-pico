@@ -16,10 +16,14 @@ int main() {
     gpio_init(25);
     gpio_set_dir(25, GPIO_OUT);
 
+    multicore_launch_core1(core1_task);
+
     while (1) {
-        if(uart_triggered){
+        if(is_uart_triggered){
+            uart_set_irq_enables(UART_ID, false, false);
             bluetooth_recieve();
             response();
+            uart_set_irq_enables(UART_ID, true, false);
         }
     }
 }
